@@ -9,70 +9,81 @@
 <link rel="apple-touch-icon" href="icon.png">
 <style>
 :root {
-  --bg:        #000;
-  --s1:        #1c1c1e;
-  --s2:        #2c2c2e;
-  --s3:        #3a3a3c;
-  --lbl:       #fff;
-  --lbl2:      rgba(235,235,245,.60);
-  --lbl3:      rgba(235,235,245,.30);
-  --acc:       #FF9F0A;
-  --acc-s:     rgba(255,159,10,.15);
-  --r-lg:      18px;
-  --r-md:      13px;
-  --font:      -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
-  --mono:      ui-monospace,"SF Mono",Menlo,monospace;
+  --bg:#000; --s1:#1c1c1e; --s2:#2c2c2e; --s3:#3a3a3c;
+  --lbl:#fff; --lbl2:rgba(235,235,245,.60); --lbl3:rgba(235,235,245,.30);
+  --acc:#FF9F0A; --acc-s:rgba(255,159,10,.15);
+  --r:13px; --rlg:18px;
+  --font:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,monospace;
 }
 *,*::before,*::after { box-sizing:border-box; -webkit-tap-highlight-color:transparent; margin:0; padding:0; }
+html,body {
+  height:100dvh; overflow:hidden; background:var(--bg); color:var(--lbl);
+  font-family:var(--font); -webkit-font-smoothing:antialiased;
+  user-select:none; -webkit-user-select:none;
+}
 
-html,body { height:100dvh; overflow:hidden; background:var(--bg); color:var(--lbl); font-family:var(--font); -webkit-font-smoothing:antialiased; user-select:none; -webkit-user-select:none; }
-
-#app { height:100dvh; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); }
+/* ── 全体レイアウト ── */
+#app {
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  padding: env(safe-area-inset-top) 12px calc(env(safe-area-inset-bottom) + 10px);
+  gap:8px;
+}
 
 /* ── タブ ── */
-.tabs { display:flex; margin:10px 16px 6px; padding:3px; background:var(--s1); border-radius:var(--r-md); gap:2px; flex-shrink:0; }
-.tab  { flex:1; padding:9px 0; font-size:13px; font-weight:600; color:var(--lbl2); background:transparent; border:none; border-radius:11px; cursor:pointer; transition:background .2s,color .2s; }
+.tabs { display:flex; background:var(--s1); border-radius:var(--r); padding:3px; gap:2px; flex-shrink:0; }
+.tab  { flex:1; padding:8px 0; font-size:13px; font-weight:600; color:var(--lbl2); background:transparent; border:none; border-radius:10px; cursor:pointer; transition:background .2s,color .2s; }
 .tab.on { background:var(--s3); color:var(--lbl); box-shadow:0 2px 6px rgba(0,0,0,.3); }
+.tab:active { transform:scale(0.97); }
 
 /* ── ステータス ── */
-.status { text-align:center; font-size:11px; letter-spacing:.05em; color:var(--lbl3); height:18px; line-height:18px; margin-bottom:6px; flex-shrink:0; }
+.status { text-align:center; font-size:12px; color:var(--lbl3); flex-shrink:0; height:16px; line-height:16px; }
 .hi { color:var(--acc); font-weight:700; }
 
-/* ── 三角形SVGエリア ── */
-.tri-box { height:210px; flex-shrink:0; margin:0 16px; background:var(--s1); border-radius:var(--r-lg); overflow:hidden; }
+/* ── 三角形エリア（flex:1 で余白を全部使う） ── */
+.tri-box {
+  flex:1;
+  min-height:0;
+  background:var(--s1);
+  border-radius:var(--rlg);
+  overflow:hidden;
+}
 .tri-box svg { width:100%; height:100%; display:block; }
 
-.tl { fill:none; stroke:var(--lbl3); stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round; transition:stroke .2s,stroke-width .2s; }
-.tl.hi { stroke:var(--acc); stroke-width:2.2; }
-.rsq { fill:none; stroke:var(--lbl3); stroke-width:1; }
+/* SVG 辺 */
+.tl  { fill:none; stroke:rgba(235,235,245,.4); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; transition:stroke .2s,stroke-width .2s; }
+.tl.on { stroke:var(--acc); stroke-width:2.5; }
+.rsq { fill:none; stroke:rgba(235,235,245,.25); stroke-width:1.2; }
 
-.svl { font-family:var(--mono); font-size:11px; fill:var(--lbl2); }
-.svl.hi { fill:var(--acc); font-weight:700; }
-.svv { font-family:var(--mono); font-size:12px; font-weight:600; fill:var(--acc); }
+/* SVG テキスト（大きめ） */
+.svl    { font-family:var(--mono); font-size:14px; fill:rgba(235,235,245,.55); }
+.svl.on { fill:var(--acc); font-weight:700; }
 
 /* ── セルグリッド（2列×2行） ── */
-.grid { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:auto auto; gap:8px; margin:8px 16px 0; flex-shrink:0; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; flex-shrink:0; }
 
-.cell { background:var(--s1); border-radius:var(--r-md); padding:8px 12px; border:1.5px solid transparent; cursor:pointer; min-height:52px; transition:border-color .15s,background .15s; }
+.cell { background:var(--s1); border-radius:var(--r); padding:10px 14px; border:1.5px solid transparent; cursor:pointer; transition:border-color .15s,background .15s; }
 .cell.on { border-color:var(--acc); background:var(--s2); }
 .cell.ro { cursor:default; }
 
-.ck { font-size:10px; letter-spacing:.05em; color:var(--lbl3); font-weight:600; margin-bottom:3px; }
+.ck { font-size:10px; color:var(--lbl3); font-weight:600; margin-bottom:4px; }
 .cell.on .ck { color:var(--acc); }
 
-.cv { font-family:var(--mono); font-size:18px; font-weight:500; color:var(--lbl); min-height:22px; }
-.cv.empty { color:var(--lbl3); font-size:14px; }
+.cv { font-family:var(--mono); font-size:20px; font-weight:500; color:var(--lbl); min-height:22px; }
+.cv.empty { color:rgba(235,235,245,.25); font-size:15px; }
 
 /* ── リセット ── */
-.reset-row { text-align:center; margin:4px 0; flex-shrink:0; }
-.rst { background:transparent; border:none; color:var(--acc); font-size:15px; font-weight:500; padding:5px 20px; border-radius:10px; cursor:pointer; font-family:var(--font); }
+.rst-row { text-align:center; flex-shrink:0; }
+.rst { background:transparent; border:none; color:var(--acc); font-size:15px; font-weight:500; padding:4px 20px; border-radius:10px; cursor:pointer; font-family:var(--font); }
 .rst:active { background:var(--acc-s); }
 
 /* ── キーパッド ── */
-.kpad { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:0 16px 10px; flex-shrink:0; }
-.kb { height:54px; background:var(--s2); border:none; border-radius:var(--r-md); color:var(--lbl); font-family:var(--mono); font-size:28px; cursor:pointer; transition:background .1s,transform .08s; display:flex; align-items:center; justify-content:center; }
+.kpad { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; flex-shrink:0; }
+.kb { height:52px; background:var(--s2); border:none; border-radius:var(--r); color:var(--lbl); font-family:var(--mono); font-size:26px; cursor:pointer; transition:background .1s,transform .08s; display:flex; align-items:center; justify-content:center; }
 .kb:active { background:var(--s3); transform:scale(0.95); }
-.kb.del { color:var(--acc); font-size:22px; }
+.kb.del { color:var(--acc); font-size:20px; }
 .kb.del:active { background:var(--acc-s); }
 </style>
 </head>
@@ -88,34 +99,31 @@ html,body { height:100dvh; overflow:hidden; background:var(--bg); color:var(--lb
   <!-- ステータス -->
   <div class="status"><span class="hi" id="sti">水平 a</span> を入力中</div>
 
-  <!-- 三角形 -->
+  <!-- 三角形 SVG -->
   <div class="tri-box">
-    <svg viewBox="0 0 320 210" preserveAspectRatio="xMidYMid meet">
-      <line id="la" class="tl hi" x1="26" y1="186" x2="294" y2="186"/><!-- 水平a / H -->
-      <line id="lv" class="tl"    x1="294" y1="186" x2="294" y2="24"/> <!-- 垂直b -->
-      <line id="lh" class="tl"    x1="26"  y1="186" x2="294" y2="24"/> <!-- 斜辺 -->
-      <polyline class="rsq" points="280,186 280,172 294,172"/>
-      <!-- ラベル（SVGテキスト） -->
-      <text id="tA" class="svl" x="290" y="16" text-anchor="end">角A —°</text>
-      <text id="tB" class="svl" x="30"  y="204">角B —°</text>
-      <text id="tH" class="svl" x="148" y="98"  text-anchor="middle" transform="rotate(-34 148 98)">斜辺 —</text>
-      <text id="ta" class="svl hi" x="160" y="204" text-anchor="middle">水平 a</text>
-      <text id="tv" class="svl"   x="308" y="108" text-anchor="middle" transform="rotate(-90 308 108)">垂直 b</text>
+    <svg viewBox="0 0 320 260" preserveAspectRatio="none">
+      <line id="la" class="tl on" x1="24" y1="234" x2="296" y2="234"/><!-- 水平a/H -->
+      <line id="lv" class="tl"    x1="296" y1="234" x2="296" y2="26"/> <!-- 垂直b -->
+      <line id="lh" class="tl"    x1="24"  y1="234" x2="296" y2="26"/> <!-- 斜辺 -->
+      <polyline class="rsq" points="280,234 280,218 296,218"/>
+      <text id="tA" class="svl" x="290" y="18"  text-anchor="end">角A —°</text>
+      <text id="tB" class="svl" x="28"  y="252">角B —°</text>
+      <text id="tH" class="svl" x="152" y="118" text-anchor="middle" transform="rotate(-35 152 118)">斜辺 —</text>
+      <text id="ta" class="svl on" x="160" y="252" text-anchor="middle">水平 a</text>
+      <text id="tv" class="svl"   x="310" y="130" text-anchor="middle" transform="rotate(-90 310 130)">垂直 b</text>
     </svg>
   </div>
 
   <!-- 4セルグリッド（入力2 + 結果2） -->
-  <div class="grid" id="cells">
-    <!-- 入力セル -->
-    <div class="cell on" id="ca" onclick="setF('f0')">
+  <div class="grid">
+    <div class="cell on" id="ca" onclick="setF(0)">
       <div class="ck" id="ca-k">水平 a</div>
       <div class="cv empty" id="ca-v">—</div>
     </div>
-    <div class="cell" id="cb" onclick="setF('f1')">
+    <div class="cell" id="cb" onclick="setF(1)">
       <div class="ck" id="cb-k">垂直 b</div>
       <div class="cv empty" id="cb-v">—</div>
     </div>
-    <!-- 結果セル -->
     <div class="cell ro">
       <div class="ck" id="rk0">斜辺（筋交い）</div>
       <div class="cv empty" id="rv0">—</div>
@@ -127,7 +135,7 @@ html,body { height:100dvh; overflow:hidden; background:var(--bg); color:var(--lb
   </div>
 
   <!-- リセット -->
-  <div class="reset-row"><button class="rst" onclick="doReset()">リセット</button></div>
+  <div class="rst-row"><button class="rst" onclick="doReset()">リセット</button></div>
 
   <!-- キーパッド -->
   <div class="kpad">
@@ -149,21 +157,12 @@ html,body { height:100dvh; overflow:hidden; background:var(--bg); color:var(--lb
 
 <script>
 // ── 状態 ──
-const S = {
-  tab: 0,
-  // 画面1
-  a:'', b:'', slope:'', slopeFrom:'none',
-  // 画面2
-  slope2:'', H:'',
-};
-
-// tab=0: f0=a, f1=b
-// tab=1: f0=slope2, f1=H
-let activeIdx = 0; // 0 or 1
+const S = { tab:0, a:'', b:'', slope:'', slopeFrom:'none', slope2:'', H:'' };
+let ai = 0; // activeIndex: 0=左セル, 1=右セル
 
 const g = id => document.getElementById(id);
 
-// ── フォーマット ──
+// ── mm整形 ──
 function mm(v) {
   const n = Math.round(v);
   return n >= 1000 ? (n/1000).toFixed(3).replace(/\.?0+$/,'')+'m' : n+'mm';
@@ -171,159 +170,100 @@ function mm(v) {
 
 // ── 計算 ──
 function calc() {
-  const a  = parseFloat(S.a)  || 0;
-  const b  = parseFloat(S.b)  || 0;
-  const sl = parseFloat(S.slope) || 0;
-  const sl2 = parseFloat(S.slope2) || 0;
-  const H  = parseFloat(S.H)  || 0;
+  const a=parseFloat(S.a)||0, b=parseFloat(S.b)||0;
+  const sl=parseFloat(S.slope)||0, sl2=parseFloat(S.slope2)||0, H=parseFloat(S.H)||0;
 
-  // 画面1: a,b → 斜辺,角度,勾配
-  const fromS2 = S.slopeFrom==='manual' && !S.a && sl>0;
-  const ca = fromS2 ? 1000 : a;
-  const cb = fromS2 ? 1000*(sl/10) : b;
+  // 画面1
+  const fs2 = S.slopeFrom==='manual' && !S.a && sl>0;
+  const ca=fs2?1000:a, cb=fs2?1000*(sl/10):b;
   const hypo  = (ca>0&&cb>0) ? Math.sqrt(ca*ca+cb*cb) : null;
   const angA  = (ca>0&&cb>0) ? Math.atan2(cb,ca)*180/Math.PI : null;
   const angB  = angA!==null ? 90-angA : null;
   const slopeR= (ca>0&&cb>0) ? cb/ca*10 : null;
 
-  // 画面2: slope2,H → 屋根高さ,垂木
+  // 画面2
   const roofH  = (H>0&&sl2>0) ? H*(sl2/10) : null;
   const rafter = roofH!==null ? Math.sqrt(H*H+roofH*roofH) : null;
   const angA2  = (H>0&&roofH!==null) ? Math.atan2(roofH,H)*180/Math.PI : null;
   const angB2  = angA2!==null ? 90-angA2 : null;
 
-  return { fromS2, ca, cb, hypo, angA, angB, slopeR, roofH, rafter, angA2, angB2 };
+  return {fs2,ca,cb,hypo,angA,angB,slopeR,roofH,rafter,angA2,angB2};
 }
 
-// ── フィールドキー取得 ──
-function curField() {
-  if (S.tab===0) return activeIdx===0 ? 'a' : 'b';
-  return activeIdx===0 ? 'slope2' : 'H';
-}
+// ── 入力フィールド名取得 ──
+function fld() { return S.tab===0 ? (ai===0?'a':'b') : (ai===0?'slope2':'H'); }
 
 // ── キー入力 ──
 function kp(k) {
-  const f = curField();
-  let v = S[f]||'';
-  if (k==='⌫')     v = v.slice(0,-1);
-  else if (k==='.') { if (!v.includes('.')) v+='.'; }
-  else v += k;
-  S[f] = v;
-
-  if (f==='a'||f==='b') {
-    if (S.slopeFrom!=='manual') {
-      const r = calc();
-      if (r.slopeR!==null) { S.slope=r.slopeR.toFixed(2); S.slopeFrom='screen1'; }
-    }
+  const f=fld(); let v=S[f]||'';
+  if (k==='⌫') v=v.slice(0,-1);
+  else if (k==='.') { if(!v.includes('.')) v+='.'; }
+  else v+=k;
+  S[f]=v;
+  if ((f==='a'||f==='b') && S.slopeFrom!=='manual') {
+    const r=calc();
+    if (r.slopeR!==null) { S.slope=r.slopeR.toFixed(2); S.slopeFrom='screen1'; }
   }
   render();
 }
 
-function setF(which) {
-  activeIdx = (which==='f0') ? 0 : 1;
-  render();
-}
+function setF(i)  { ai=i; render(); }
+function setTab(t){ S.tab=t; ai=0; render(); }
+function doReset(){ S.a='';S.b='';S.slope='';S.slopeFrom='none';S.slope2='';S.H=''; ai=0; render(); }
 
-function setTab(t) {
-  S.tab = t; activeIdx = 0;
-  render();
-}
-
-function doReset() {
-  S.a=''; S.b=''; S.slope=''; S.slopeFrom='none'; S.slope2=''; S.H='';
-  activeIdx=0; render();
-}
-
-// ── 辺ハイライト ──
-function hilite(aOn, vOn, hOn) {
-  const tog = (id, on) => {
-    const el = g(id);
-    el.classList.toggle('hi', on);
-  };
-  tog('la',aOn); tog('lv',vOn); tog('lh',hOn);
+// ── SVG辺ハイライト ──
+function hl(aOn,vOn,hOn) {
+  ['la','lv','lh'].forEach((id,i)=>{
+    g(id).classList.toggle('on',[aOn,vOn,hOn][i]);
+  });
 }
 
 // ── SVGテキスト ──
-function svt(id, txt, hi) {
-  const el = g(id);
-  el.textContent = txt;
-  el.classList.toggle('hi', hi);
-}
+function st(id,txt,on) { const e=g(id); e.textContent=txt; e.classList.toggle('on',on); }
 
-// ── セル表示 ──
-function showCell(id, txt, hi) {
-  const el = g(id);
-  const isEmpty = !txt;
-  el.textContent = isEmpty ? '—' : txt;
-  el.classList.toggle('empty', isEmpty);
-  el.classList.toggle('hi', !isEmpty && hi);
+// ── セル値 ──
+function sc(id,txt) {
+  const e=g(id), empty=!txt;
+  e.textContent=empty?'—':txt;
+  e.classList.toggle('empty',empty);
 }
 
 // ── 描画 ──
 function render() {
-  const r = calc();
-  const f = curField();
-
-  // タブ
-  g('tb0').classList.toggle('on', S.tab===0);
-  g('tb1').classList.toggle('on', S.tab===1);
-
-  // ステータス
-  const nm = {a:'水平 a', b:'垂直 b', slope2:'勾配', H:'水平 H'};
-  g('sti').textContent = nm[f];
+  const r=calc(), f=fld();
+  g('tb0').classList.toggle('on',S.tab===0);
+  g('tb1').classList.toggle('on',S.tab===1);
+  g('sti').textContent={a:'水平 a',b:'垂直 b',slope2:'勾配',H:'水平 H'}[f];
 
   if (S.tab===0) {
-    // ── 入力セル ──
-    g('ca-k').textContent='水平 a';
-    g('cb-k').textContent='垂直 b';
-    g('ca').classList.toggle('on', activeIdx===0);
-    g('cb').classList.toggle('on', activeIdx===1);
-
-    const aT = (!S.a&&r.fromS2)?'1000mm':(S.a?S.a+'mm':'');
-    const bT = (!S.b&&r.fromS2)?mm(r.cb):(S.b?S.b+'mm':'');
-    showCell('ca-v', aT, false);
-    showCell('cb-v', bT, false);
-
-    // ── 結果セル ──
-    g('rk0').textContent='斜辺（筋交い）';
-    g('rk1').textContent='勾配';
-    showCell('rv0', r.hypo!==null ? mm(r.hypo) : '', true);
-    showCell('rv1', r.slopeR!==null ? r.slopeR.toFixed(2)+'寸' : '', true);
-
-    // ── SVG ──
-    hilite(activeIdx===0, activeIdx===1, false);
-    svt('tA', r.angA!==null ? '角A '+r.angA.toFixed(1)+'°' : '角A —°', false);
-    svt('tB', r.angB!==null ? '角B '+r.angB.toFixed(1)+'°' : '角B —°', false);
-    svt('tH', r.hypo!==null ? '斜辺 '+mm(r.hypo) : '斜辺 —', r.hypo!==null);
-    svt('ta', S.a?S.a+'mm':'水平 a', activeIdx===0);
-    svt('tv', S.b?S.b+'mm':'垂直 b', activeIdx===1);
-    g('tv').setAttribute('opacity','1');
+    g('ca-k').textContent='水平 a'; g('cb-k').textContent='垂直 b';
+    g('ca').classList.toggle('on',ai===0); g('cb').classList.toggle('on',ai===1);
+    sc('ca-v', (!S.a&&r.fs2)?'1000mm':(S.a?S.a+'mm':''));
+    sc('cb-v', (!S.b&&r.fs2)?mm(r.cb):(S.b?S.b+'mm':''));
+    g('rk0').textContent='斜辺（筋交い）'; g('rk1').textContent='勾配';
+    sc('rv0', r.hypo!==null?mm(r.hypo):'');
+    sc('rv1', r.slopeR!==null?r.slopeR.toFixed(2)+'寸':'');
+    hl(ai===0, ai===1, false);
+    st('tA', r.angA!==null?'角A '+r.angA.toFixed(1)+'°':'角A —°', false);
+    st('tB', r.angB!==null?'角B '+r.angB.toFixed(1)+'°':'角B —°', false);
+    st('tH', r.hypo!==null?'斜辺 '+mm(r.hypo):'斜辺 —', r.hypo!==null);
+    st('ta', S.a?S.a+'mm':'水平 a', ai===0);
+    st('tv', S.b?S.b+'mm':'垂直 b', ai===1);
 
   } else {
-    // ── 入力セル ──
-    g('ca-k').textContent='勾配';
-    g('cb-k').textContent='水平 H';
-    g('ca').classList.toggle('on', activeIdx===0);
-    g('cb').classList.toggle('on', activeIdx===1);
-
-    showCell('ca-v', S.slope2?S.slope2+'寸':'', false);
-    showCell('cb-v', S.H?S.H+'mm':'', false);
-
-    // ── 結果セル ──
-    g('rk0').textContent='屋根高さ';
-    g('rk1').textContent='斜辺（垂木長さ）';
-    showCell('rv0', r.roofH!==null ? mm(r.roofH) : '', true);
-    showCell('rv1', r.rafter!==null ? mm(r.rafter) : '', true);
-
-    // ── SVG ──
-    hilite(activeIdx===1, false, activeIdx===0);
-    svt('tA', r.angA2!==null ? '角A '+r.angA2.toFixed(1)+'°' : '角A —°', false);
-    svt('tB', r.angB2!==null ? '角B '+r.angB2.toFixed(1)+'°' : '角B —°', false);
-    svt('tH', r.rafter!==null ? '斜辺 '+mm(r.rafter) : '斜辺 —', r.rafter!==null);
-    svt('ta', S.H?S.H+'mm':'水平 H', activeIdx===1);
-    const hH = r.roofH!==null ? mm(r.roofH) : '屋根高さ';
-    svt('tv', hH, r.roofH!==null);
-    g('tv').setAttribute('opacity','1');
+    g('ca-k').textContent='勾配'; g('cb-k').textContent='水平 H';
+    g('ca').classList.toggle('on',ai===0); g('cb').classList.toggle('on',ai===1);
+    sc('ca-v', S.slope2?S.slope2+'寸':'');
+    sc('cb-v', S.H?S.H+'mm':'');
+    g('rk0').textContent='屋根高さ'; g('rk1').textContent='斜辺（垂木長さ）';
+    sc('rv0', r.roofH!==null?mm(r.roofH):'');
+    sc('rv1', r.rafter!==null?mm(r.rafter):'');
+    hl(ai===1, false, ai===0);
+    st('tA', r.angA2!==null?'角A '+r.angA2.toFixed(1)+'°':'角A —°', false);
+    st('tB', r.angB2!==null?'角B '+r.angB2.toFixed(1)+'°':'角B —°', false);
+    st('tH', r.rafter!==null?'斜辺 '+mm(r.rafter):'斜辺 —', r.rafter!==null);
+    st('ta', S.H?S.H+'mm':'水平 H', ai===1);
+    st('tv', r.roofH!==null?mm(r.roofH):'屋根高さ', r.roofH!==null);
   }
 }
 
