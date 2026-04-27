@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>大工計算</title>
+  <link rel="icon" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #E8530A;
+      --bg: #ffffff;
+      --bg2: #f2f2f7;
+      --text: #000000;
+      --text2: #8e8e93;
+      --border: #c6c6c8;
+      --card-radius: 10px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --bg2: #1c1c1e;
+        --text: #ffffff;
+        --text2: #8e8e93;
+        --border: #38383a;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: var(--bg2);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100dvh;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100dvh;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── タブ ── */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 12px 0 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      transition: color .15s;
+    }
+    .tab-btn.active { color: var(--accent); }
+    .tab-btn .underline {
+      width: 100%;
+      height: 2px;
+      background: transparent;
+      transition: background .15s;
+    }
+    .tab-btn.active .underline { background: var(--accent); }
+
+    /* ── ヒント ── */
+    .hint {
+      background: var(--bg2);
+      text-align: center;
+      font-size: 11px;
+      color: var(--text2);
+      padding: 6px 0;
+    }
+
+    /* ── 図面エリア ── */
+    .diagram-area {
+      display: none;
+      flex-direction: column;
+      flex: 0 0 auto;
+    }
+    .diagram-area.active { display: flex; }
+
+    .canvas-wrap {
+      position: relative;
+      height: 270px;
+      padding: 8px 12px 0;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* フィールドボタン（図面上に重ねるボタン） */
+    .field-btn {
+      position: absolute;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text2);
+      cursor: pointer;
+      padding: 5px 0;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: border-color .12s, color .12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .field-btn.has-value { color: var(--accent); }
+    .field-btn.focused { border-color: var(--accent); border-width: 2.5px; }
+
+    /* 図面ラベル（テキスト表示のみ） */
+    .diagram-label {
+      position: absolute;
+      font-size: 14px;
+      color: var(--text2);
+      pointer-events: none;
+    }
+    .hypo-label {
+      position: absolute;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text2);
+      background: var(--bg);
+      padding: 2px 6px;
+      pointer-events: none;
+      transform-origin: center center;
+      white-space: nowrap;
+    }
+    .hypo-label.has-value { color: var(--accent); }
+
+    /* 連動バッジ */
+    .badge {
+      position: absolute;
+      top: 12px;
+      right: 20px;
+      font-size: 10px;
+      color: var(--accent);
+      border: 0.8px solid var(--accent);
+      border-radius: 4px;
+      padding: 3px 7px;
+      pointer-events: none;
+      display: none;
+    }
+    .badge.show { display: block; }
+
+    /* ── 結果カード ── */
+    .result-row {
+      display: flex;
+      gap: 8px;
+      padding: 8px 12px;
+    }
+    .rcard {
+      flex: 1;
+      background: var(--bg2);
+      border-radius: var(--card-radius);
+      padding: 8px 12px;
+    }
+    .rcard-label {
+      font-size: 11px;
+      color: var(--text2);
+      margin-bottom: 2px;
+    }
+    .rcard-value {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text2);
+      min-height: 24px;
+    }
+    .rcard-value.has-value { color: var(--accent); }
+
+    /* ── リセット ── */
+    .reset-btn {
+      background: var(--bg2);
+      border: none;
+      width: 100%;
+      padding: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--accent);
+      cursor: pointer;
+      border-top: 1px solid var(--border);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .reset-btn:active { opacity: .7; }
+
+    /* ── キーパッド ── */
+    .keypad {
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+    .key-row {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+    .key-row:last-child { border-bottom: none; }
+    .key-btn {
+      flex: 1;
+      height: 52px;
+      background: var(--bg);
+      border: none;
+      border-right: 1px solid var(--border);
+      font-size: 26px;
+      color: var(--text);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background .08s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .key-btn:last-child { border-right: none; }
+    .key-btn:active { background: var(--bg2); }
+    .key-btn.del { color: var(--accent); }
+
+    /* Screen2 専用：勾配入力ボタン */
+    #slope-btn {
+      left: 50%; top: 28px;
+      transform: translateX(-50%);
+      width: 160px;
+    }
+
+    /* Screen1 専用：水平a・垂直b */
+    #a-btn { bottom: 4px; left: 50%; transform: translateX(-50%); width: 130px; }
+    #b-btn-wrap {
+      position: absolute;
+      right: 2px;
+      top: 50%;
+      transform: translateY(-50%) rotate(-90deg);
+    }
+    #b-btn { width: 90px; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <!-- タブ -->
+  <div class="tabs">
+    <button class="tab-btn active" id="tab0" onclick="switchTab(0)">
+      ① 斜辺・角度
+      <div class="underline"></div>
+    </button>
+    <button class="tab-btn" id="tab1" onclick="switchTab(1)">
+      ② 勾配・高さ
+      <div class="underline"></div>
+    </button>
+  </div>
+
+  <!-- ヒント -->
+  <div class="hint" id="hint">水平 a を入力中</div>
+
+  <!-- ── 画面1: 斜辺・角度 ── -->
+  <div class="diagram-area active" id="screen1">
+    <div class="canvas-wrap" id="wrap1">
+      <canvas id="canvas1"></canvas>
+      <!-- 斜辺ラベル -->
+      <div class="hypo-label" id="hypo-label1">斜辺 —</div>
+      <!-- 角度ラベル -->
+      <div class="diagram-label" id="angleA-label" style="right:44px; top:36px;">角A —°</div>
+      <div class="diagram-label" id="angleB-label" style="left:40px; bottom:36px;">角B —°</div>
+      <!-- 連動バッジ -->
+      <div class="badge" id="badge1">②連動: a=1000mm</div>
+      <!-- 水平a ボタン -->
+      <button class="field-btn" id="a-btn" onclick="setActive('a')">水平 a</button>
+      <!-- 垂直b ボタン（回転ラップ） -->
+      <div id="b-btn-wrap">
+        <button class="field-btn" id="b-btn" onclick="setActive('b')">垂直 b</button>
+      </div>
+    </div>
+    <div class="result-row">
+      <div class="rcard">
+        <div class="rcard-label">斜辺（筋交い）</div>
+        <div class="rcard-value" id="r-hypo">—</div>
+      </div>
+      <div class="rcard">
+        <div class="rcard-label">勾配</div>
+        <div class="rcard-value" id="r-slope">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 画面2: 勾配・高さ ── -->
+  <div class="diagram-area" id="screen2">
+    <div class="canvas-wrap" id="wrap2">
+      <canvas id="canvas2"></canvas>
+      <!-- 斜辺ラベル -->
+      <div class="hypo-label" id="hypo-label2">斜辺 —</div>
+      <!-- 勾配ボタン -->
+      <button class="field-btn" id="slope-btn" onclick="setActive('slope')">勾配: —</button>
+      <div class="diagram-label" style="left:50%;transform:translateX(-50%);top:68px;font-size:12px;color:var(--border)">↑ タップして入力</div>
+      <!-- 垂直b (表示のみ) -->
+      <div id="b2-wrap" style="position:absolute;right:2px;top:50%;transform:translateY(-50%) rotate(-90deg)">
+        <div class="field-btn" style="width:90px;pointer-events:none;color:var(--text2)" id="b2-disp">高さ —</div>
+      </div>
+      <!-- 水平Hボタン -->
+      <button class="field-btn" id="H-btn" onclick="setActive('H')" style="bottom:4px;left:50%;transform:translateX(-50%);width:130px;">水平 H</button>
+    </div>
+    <div class="result-row">
+      <div class="rcard">
+        <div class="rcard-label">屋根高さ</div>
+        <div class="rcard-value" id="r-roofH">—</div>
+      </div>
+      <div class="rcard">
+        <div class="rcard-label">斜辺（垂木長さ）</div>
+        <div class="rcard-value" id="r-rafter">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- リセット -->
+  <button class="reset-btn" onclick="reset()">リセット</button>
+
+  <!-- キーパッド -->
+  <div class="keypad">
+    <div class="key-row">
+      <button class="key-btn" onclick="keyInput('7')">7</button>
+      <button class="key-btn" onclick="keyInput('8')">8</button>
+      <button class="key-btn" onclick="keyInput('9')">9</button>
+    </div>
+    <div class="key-row">
+      <button class="key-btn" onclick="keyInput('4')">4</button>
+      <button class="key-btn" onclick="keyInput('5')">5</button>
+      <button class="key-btn" onclick="keyInput('6')">6</button>
+    </div>
+    <div class="key-row">
+      <button class="key-btn" onclick="keyInput('1')">1</button>
+      <button class="key-btn" onclick="keyInput('2')">2</button>
+      <button class="key-btn" onclick="keyInput('3')">3</button>
+    </div>
+    <div class="key-row">
+      <button class="key-btn" onclick="keyInput('0')">0</button>
+      <button class="key-btn" onclick="keyInput('.')">.</button>
+      <button class="key-btn del" onclick="keyInput('⌫')">⌫</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ──
+const state = {
+  a: '', b: '', slope: '', H: '',
+  slopeFrom: 'none', // 'none' | 'screen1' | 'manual'
+  activeField: 'a',
+  currentTab: 0,
+};
+
+// ── Helper: mm整形 ──
+function fmtMM(v) {
+  const mm = Math.round(v);
+  if (mm >= 1000) {
+    let s = (mm / 1000).toFixed(3).replace(/\.?0+$/, '');
+    return s + 'm';
+  }
+  return mm + 'mm';
+}
+
+// ── 計算 ──
+function calc() {
+  const a = parseFloat(state.a) || 0;
+  const b = parseFloat(state.b) || 0;
+  const slope = parseFloat(state.slope) || 0;
+  const H = parseFloat(state.H) || 0;
+  const fromScreen2 = state.slopeFrom === 'manual' && !state.a && slope > 0;
+
+  const calcA = fromScreen2 ? 1000 : a;
+  const calcB = fromScreen2 ? 1000 * (slope / 10) : b;
+
+  const hypotenuse = (calcA > 0 && calcB > 0) ? Math.sqrt(calcA*calcA + calcB*calcB) : null;
+  const angleA = (calcA > 0 && calcB > 0) ? Math.atan2(calcB, calcA) * 180 / Math.PI : null;
+  const angleB = angleA !== null ? 90 - angleA : null;
+  const slopeResult = (calcA > 0 && calcB > 0) ? calcB / calcA * 10 : null;
+
+  const roofHeight = (H > 0 && slope > 0) ? H * (slope / 10) : null;
+  const rafterLength = (roofHeight !== null && H > 0) ? Math.sqrt(H*H + roofHeight*roofHeight) : null;
+
+  return { a, b, slope, H, fromScreen2, calcA, calcB, hypotenuse, angleA, angleB, slopeResult, roofHeight, rafterLength };
+}
+
+// ── 入力処理 ──
+function keyInput(key) {
+  const f = state.activeField;
+  let val = state[f] || '';
+  if (key === '⌫') {
+    val = val.slice(0, -1);
+  } else if (key === '.') {
+    if (val.includes('.')) return;
+    val += key;
+  } else {
+    val += key;
+  }
+  state[f] = val;
+
+  if (f === 'slope') state.slopeFrom = 'manual';
+  if ((f === 'a' || f === 'b') && state.slopeFrom !== 'manual') {
+    const c = calc();
+    if (c.slopeResult !== null) {
+      state.slope = c.slopeResult.toFixed(2);
+      state.slopeFrom = 'screen1';
+    }
+  }
+  render();
+}
+
+// ── フィールド切替 ──
+function setActive(field) {
+  state.activeField = field;
+  render();
+}
+
+// ── タブ切替 ──
+function switchTab(idx) {
+  state.currentTab = idx;
+  state.activeField = idx === 0 ? 'a' : 'slope';
+  document.getElementById('screen1').classList.toggle('active', idx === 0);
+  document.getElementById('screen2').classList.toggle('active', idx === 1);
+  document.getElementById('tab0').classList.toggle('active', idx === 0);
+  document.getElementById('tab1').classList.toggle('active', idx === 1);
+  render();
+}
+
+// ── リセット ──
+function reset() {
+  state.a = ''; state.b = ''; state.slope = ''; state.H = '';
+  state.slopeFrom = 'none';
+  state.activeField = state.currentTab === 0 ? 'a' : 'slope';
+  render();
+}
+
+// ── Canvas 三角形描画 ──
+function drawTriangle(canvasId, wrapId) {
+  const canvas = document.getElementById(canvasId);
+  const wrap = document.getElementById(wrapId);
+  const dpr = window.devicePixelRatio || 1;
+  const W = wrap.clientWidth - 24; // padding 12px * 2
+  const H = wrap.clientHeight - 8;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+
+  const pad = 28;
+  const bl = {x: pad, y: H - pad};
+  const br = {x: W - pad, y: H - pad};
+  const tr = {x: W - pad, y: pad};
+
+  // 三角形
+  ctx.beginPath();
+  ctx.moveTo(bl.x, bl.y);
+  ctx.lineTo(br.x, br.y);
+  ctx.lineTo(tr.x, tr.y);
+  ctx.closePath();
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border') || '#c6c6c8';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // 直角マーク
+  const s = 14;
+  ctx.beginPath();
+  ctx.moveTo(br.x - s, br.y);
+  ctx.lineTo(br.x - s, br.y - s);
+  ctx.lineTo(br.x, br.y - s);
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--border') || '#c6c6c8';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  return { bl, br, tr, W, H };
+}
+
+// ── 斜辺ラベル位置計算 ──
+function positionHypoLabel(labelEl, bl, tr, W, H, text, hasValue) {
+  const cx = W * 0.38;
+  const cy = H * 0.38;
+  const angle = Math.atan2(tr.y - bl.y, tr.x - bl.x);
+  const deg = angle * 180 / Math.PI;
+
+  labelEl.textContent = text;
+  labelEl.className = 'hypo-label' + (hasValue ? ' has-value' : '');
+  labelEl.style.left = cx + 'px';
+  labelEl.style.top = cy + 'px';
+  labelEl.style.transform = `translate(-50%, -50%) rotate(${deg}deg)`;
+}
+
+// ── render ──
+function render() {
+  const c = calc();
+  const af = state.activeField;
+
+  // ヒント
+  const hints = { a: '水平 a を入力中', b: '垂直 b を入力中', slope: '勾配を入力（例: 3.5）', H: '水平 H を入力中' };
+  document.getElementById('hint').textContent = hints[af];
+
+  // ── Screen1 ──
+  const { bl: bl1, br: br1, tr: tr1, W: W1, H: H1 } = drawTriangle('canvas1', 'wrap1');
+
+  // 斜辺ラベル
+  const hypoText1 = c.hypotenuse !== null ? '斜辺 ' + fmtMM(c.hypotenuse) : '斜辺 —';
+  positionHypoLabel(document.getElementById('hypo-label1'), bl1, tr1, W1, H1, hypoText1, c.hypotenuse !== null);
+
+  // 角度ラベル
+  document.getElementById('angleA-label').textContent = c.angleA !== null ? `角A ${c.angleA.toFixed(1)}°` : '角A —°';
+  document.getElementById('angleB-label').textContent = c.angleB !== null ? `角B ${c.angleB.toFixed(1)}°` : '角B —°';
+
+  // 連動バッジ
+  document.getElementById('badge1').classList.toggle('show', c.fromScreen2);
+
+  // a ボタン
+  const aBtn = document.getElementById('a-btn');
+  const aText = (!state.a && c.fromScreen2) ? '1000mm' : (state.a ? state.a + 'mm' : '水平 a');
+  aBtn.textContent = aText;
+  aBtn.classList.toggle('has-value', !!(state.a || c.fromScreen2));
+  aBtn.classList.toggle('focused', af === 'a');
+
+  // b ボタン
+  const bBtn = document.getElementById('b-btn');
+  const bText = (!state.b && c.fromScreen2) ? fmtMM(c.calcB) : (state.b ? state.b + 'mm' : '垂直 b');
+  bBtn.textContent = bText;
+  bBtn.classList.toggle('has-value', !!(state.b || c.fromScreen2));
+  bBtn.classList.toggle('focused', af === 'b');
+
+  // 結果
+  const rHypo = document.getElementById('r-hypo');
+  rHypo.textContent = c.hypotenuse !== null ? fmtMM(c.hypotenuse) : '—';
+  rHypo.className = 'rcard-value' + (c.hypotenuse !== null ? ' has-value' : '');
+
+  const rSlope = document.getElementById('r-slope');
+  rSlope.textContent = c.slopeResult !== null ? c.slopeResult.toFixed(2) + '寸' : '—';
+  rSlope.className = 'rcard-value' + (c.slopeResult !== null ? ' has-value' : '');
+
+  // ── Screen2 ──
+  const { bl: bl2, br: br2, tr: tr2, W: W2, H: H2 } = drawTriangle('canvas2', 'wrap2');
+
+  // 斜辺ラベル
+  const hypoText2 = c.rafterLength !== null ? '斜辺 ' + fmtMM(c.rafterLength) : '斜辺 —';
+  positionHypoLabel(document.getElementById('hypo-label2'), bl2, tr2, W2, H2, hypoText2, c.rafterLength !== null);
+
+  // 勾配ボタン
+  const slopeBtn = document.getElementById('slope-btn');
+  slopeBtn.textContent = state.slope ? `勾配: ${state.slope}寸` : '勾配: —';
+  slopeBtn.classList.toggle('has-value', !!state.slope);
+  slopeBtn.classList.toggle('focused', af === 'slope');
+
+  // 高さ表示
+  const b2Disp = document.getElementById('b2-disp');
+  b2Disp.textContent = c.roofHeight !== null ? fmtMM(c.roofHeight) : '高さ —';
+  b2Disp.style.color = c.roofHeight !== null ? 'var(--accent)' : 'var(--text2)';
+
+  // H ボタン
+  const hBtn = document.getElementById('H-btn');
+  hBtn.textContent = state.H ? state.H + 'mm' : '水平 H';
+  hBtn.classList.toggle('has-value', !!state.H);
+  hBtn.classList.toggle('focused', af === 'H');
+
+  // 結果
+  const rRoofH = document.getElementById('r-roofH');
+  rRoofH.textContent = c.roofHeight !== null ? fmtMM(c.roofHeight) : '—';
+  rRoofH.className = 'rcard-value' + (c.roofHeight !== null ? ' has-value' : '');
+
+  const rRafter = document.getElementById('r-rafter');
+  rRafter.textContent = c.rafterLength !== null ? fmtMM(c.rafterLength) : '—';
+  rRafter.className = 'rcard-value' + (c.rafterLength !== null ? ' has-value' : '');
+}
+
+// ── 初期描画・リサイズ ──
+window.addEventListener('DOMContentLoaded', () => { render(); });
+window.addEventListener('resize', () => { render(); });
+</script>
+</body>
+</html>
