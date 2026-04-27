@@ -29,22 +29,28 @@
       }
     }
 
+    html, body {
+      height: 100%;
+      height: 100dvh;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
       background: var(--bg2);
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      min-height: 100dvh;
+      overflow: hidden;
     }
 
     #app {
       width: 100%;
       max-width: 430px;
-      min-height: 100dvh;
+      height: 100dvh;
       background: var(--bg);
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     /* ── タブ ── */
@@ -91,11 +97,12 @@
       flex-direction: column;
       flex: 0 0 auto;
     }
-    .diagram-area.active { display: flex; }
+    .diagram-area.active { display: flex; flex: 1; min-height: 0; }
 
     .canvas-wrap {
       position: relative;
-      height: 270px;
+      flex: 1;
+      min-height: 0;
       padding: 8px 12px 0;
     }
     canvas {
@@ -165,6 +172,7 @@
       display: flex;
       gap: 8px;
       padding: 8px 12px;
+      flex-shrink: 0;
     }
     .rcard {
       flex: 1;
@@ -197,13 +205,14 @@
       cursor: pointer;
       border-top: 1px solid var(--border);
       -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
     }
     .reset-btn:active { opacity: .7; }
 
     /* ── キーパッド ── */
     .keypad {
       border-top: 1px solid var(--border);
-      margin-top: auto;
+      flex-shrink: 0;
     }
     .key-row {
       display: flex;
