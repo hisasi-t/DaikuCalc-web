@@ -51,7 +51,7 @@ html,body {
 .tri-box {
   flex:1;
   min-height:0;
-  max-height:32vh;
+  max-height:22vh;
   background:var(--s1);
   border-radius:var(--rlg);
   overflow:hidden;
@@ -71,15 +71,15 @@ html,body {
 /* ── セルグリッド（2列×2行） ── */
 .grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; flex-shrink:0; }
 
-.cell { background:var(--s1); border-radius:var(--r); padding:6px 12px; border:1.5px solid var(--s3); cursor:pointer; transition:border-color .15s,background .15s; }
+.cell { background:var(--s1); border-radius:var(--r); padding:10px 14px; border:1.5px solid var(--s3); cursor:pointer; transition:border-color .15s,background .15s; }
 .cell.on { border-color:var(--acc); background:#FFF8F5; }
 .cell.ro { cursor:default; border-color:var(--s3); background:var(--s1); }
 
-.ck { font-size:13px; color:var(--lbl3); font-weight:600; margin-bottom:2px; }
+.ck { font-size:18px; color:var(--lbl3); font-weight:600; margin-bottom:4px; }
 .cell.on .ck { color:var(--acc); }
 
-.cv { font-family:var(--mono); font-size:24px; font-weight:500; color:var(--lbl); min-height:26px; }
-.cv.empty { color:var(--lbl3); font-size:15px; }
+.cv { font-family:var(--mono); font-size:32px; font-weight:500; color:var(--lbl); min-height:36px; }
+.cv.empty { color:var(--lbl3); font-size:24px; }
 
 /* ── リセット ── */
 .rst-row { text-align:center; flex-shrink:0; }
