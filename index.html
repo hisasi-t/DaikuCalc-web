@@ -75,11 +75,11 @@ html,body {
 .cell.on { border-color:var(--acc); background:#FFF8F5; }
 .cell.ro { cursor:default; border-color:var(--s3); background:var(--s1); }
 
-.ck { font-size:22px; color:var(--lbl3); font-weight:600; margin-bottom:6px; }
+.ck { font-size:24px; color:var(--lbl3); font-weight:700; margin-bottom:6px; }
 .cell.on .ck { color:var(--acc); }
 
-.cv { font-family:var(--mono); font-size:38px; font-weight:500; color:var(--lbl); min-height:42px; }
-.cv.empty { color:var(--lbl3); font-size:30px; }
+.cv { font-family:var(--mono); font-size:42px; font-weight:700; color:var(--lbl); min-height:46px; }
+.cv.empty { color:var(--lbl3); font-size:32px; }
 
 /* ── リセット ── */
 .rst-row { text-align:center; flex-shrink:0; }
@@ -113,6 +113,7 @@ html,body {
       <line id="lv" class="tl"    x1="296" y1="234" x2="296" y2="26"/> <!-- 垂直b -->
       <line id="lh" class="tl"    x1="24"  y1="234" x2="296" y2="26"/> <!-- 斜辺 -->
       <polyline class="rsq" points="280,234 280,218 296,218"/>
+      <text id="tS" class="svl" x="28"  y="22">勾配 —</text>
       <text id="tA" class="svl" x="290" y="18"  text-anchor="end">角A —°</text>
       <text id="tB" class="svl" x="28"  y="252">角B —°</text>
       <text id="tH" class="svl" x="152" y="118" text-anchor="middle" transform="rotate(-35 152 118)">斜辺 —</text>
@@ -251,6 +252,7 @@ function render() {
     sc('rv0', r.hypo!==null?mm(r.hypo):'');
     sc('rv1', r.slopeR!==null?r.slopeR.toFixed(2)+'寸':'');
     hl(ai===0, ai===1, false);
+    st('tS', r.slopeR!==null?'勾配 '+r.slopeR.toFixed(2)+'寸':'勾配 —', r.slopeR!==null);
     st('tA', r.angA!==null?'角A '+r.angA.toFixed(1)+'°':'角A —°', false);
     st('tB', r.angB!==null?'角B '+r.angB.toFixed(1)+'°':'角B —°', false);
     st('tH', r.hypo!==null?'斜辺 '+mm(r.hypo):'斜辺 —', r.hypo!==null);
@@ -266,6 +268,7 @@ function render() {
     sc('rv0', r.roofH!==null?mm(r.roofH):'');
     sc('rv1', r.rafter!==null?mm(r.rafter):'');
     hl(ai===1, false, ai===0);
+    st('tS', S.slope?'勾配 '+S.slope+'寸':'勾配 —', !!S.slope);
     st('tA', r.angA2!==null?'角A '+r.angA2.toFixed(1)+'°':'角A —°', false);
     st('tB', r.angB2!==null?'角B '+r.angB2.toFixed(1)+'°':'角B —°', false);
     st('tH', r.rafter!==null?'斜辺 '+mm(r.rafter):'斜辺 —', r.rafter!==null);
