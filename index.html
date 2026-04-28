@@ -39,7 +39,7 @@ html,body {
 
 /* ── タブ ── */
 .tabs { display:flex; background:var(--s3); border-radius:var(--r); padding:3px; gap:2px; flex-shrink:0; }
-.tab  { flex:1; padding:8px 0; font-size:13px; font-weight:600; color:var(--lbl2); background:transparent; border:none; border-radius:10px; cursor:pointer; transition:background .2s,color .2s; }
+.tab  { flex:1; padding:11px 0; font-size:15px; font-weight:600; color:var(--lbl2); background:transparent; border:none; border-radius:10px; cursor:pointer; transition:background .2s,color .2s; }
 .tab.on { background:#fff; color:var(--lbl); box-shadow:0 1px 4px rgba(0,0,0,.12); }
 .tab:active { transform:scale(0.97); }
 
@@ -51,9 +51,11 @@ html,body {
 .tri-box {
   flex:1;
   min-height:0;
+  max-height:45vh;
   background:var(--s1);
   border-radius:var(--rlg);
   overflow:hidden;
+  padding:12px;
 }
 .tri-box svg { width:100%; height:100%; display:block; }
 
@@ -86,7 +88,7 @@ html,body {
 
 /* ── キーパッド ── */
 .kpad { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; flex-shrink:0; }
-.kb { height:52px; background:var(--s1); border:none; border-radius:var(--r); color:var(--lbl); font-family:var(--mono); font-size:26px; cursor:pointer; transition:background .1s,transform .08s; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,.1); }
+.kb { height:62px; background:var(--s1); border:none; border-radius:var(--r); color:var(--lbl); font-family:var(--mono); font-size:28px; cursor:pointer; transition:background .1s,transform .08s; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,.1); }
 .kb:active { background:var(--s3); transform:scale(0.95); }
 .kb.del { color:var(--acc); font-size:20px; }
 .kb.del:active { background:var(--acc-s); }
