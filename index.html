@@ -51,11 +51,10 @@ html,body {
 .tri-box {
   flex:1;
   min-height:0;
-  max-height:22vh;
   background:var(--s1);
   border-radius:var(--rlg);
   overflow:hidden;
-  padding:12px;
+  padding:20px;
 }
 .tri-box svg { width:100%; height:100%; display:block; }
 
@@ -141,6 +140,9 @@ html,body {
       <div class="cv empty" id="rv1">—</div>
     </div>
   </div>
+
+  <!-- スペーサー：電卓を下に押し下げる -->
+  <div style="flex:1;min-height:0;max-height:16px;"></div>
 
   <!-- リセット -->
   <div class="rst-row"><button class="rst" onclick="doReset()">リセット</button></div>
@@ -246,34 +248,34 @@ function render() {
   if (S.tab===0) {
     g('ca-k').textContent='水平 a'; g('cb-k').textContent='垂直 b';
     g('ca').classList.toggle('on',ai===0); g('cb').classList.toggle('on',ai===1);
-    sc('ca-v', (!S.a&&r.fs2)?'1000mm':(S.a?S.a+'mm':''));
-    sc('cb-v', (!S.b&&r.fs2)?mm(r.cb):(S.b?S.b+'mm':''));
+    sc('ca-v', (!S.a&&r.fs2)?'1000':(S.a?S.a:''));
+    sc('cb-v', (!S.b&&r.fs2)?String(Math.round(r.cb)):(S.b?S.b:''));
     g('rk0').textContent='斜辺（筋交い）'; g('rk1').textContent='勾配';
-    sc('rv0', r.hypo!==null?mm(r.hypo):'');
+    sc('rv0', r.hypo!==null?String(Math.round(r.hypo)):'');
     sc('rv1', r.slopeR!==null?r.slopeR.toFixed(2)+'寸':'');
     hl(ai===0, ai===1, false);
     st('tS', r.slopeR!==null?'勾配 '+r.slopeR.toFixed(2)+'寸':'勾配 —', r.slopeR!==null);
     st('tA', r.angA!==null?'角A '+r.angA.toFixed(1)+'°':'角A —°', false);
     st('tB', r.angB!==null?'角B '+r.angB.toFixed(1)+'°':'角B —°', false);
-    st('tH', r.hypo!==null?'斜辺 '+mm(r.hypo):'斜辺 —', r.hypo!==null);
-    st('ta', S.a?S.a+'mm':'水平 a', ai===0);
-    st('tv', S.b?S.b+'mm':'垂直 b', ai===1);
+    st('tH', r.hypo!==null?'斜辺 '+String(Math.round(r.hypo)):'斜辺 —', r.hypo!==null);
+    st('ta', S.a?S.a:'水平 a', ai===0);
+    st('tv', S.b?S.b:'垂直 b', ai===1);
 
   } else {
     g('ca-k').textContent='勾配'; g('cb-k').textContent='水平 H';
     g('ca').classList.toggle('on',ai===0); g('cb').classList.toggle('on',ai===1);
     sc('ca-v', S.slope2?S.slope2+'寸':'');
-    sc('cb-v', S.H?S.H+'mm':'');
+    sc('cb-v', S.H?S.H:'');
     g('rk0').textContent='屋根高さ'; g('rk1').textContent='斜辺（垂木長さ）';
-    sc('rv0', r.roofH!==null?mm(r.roofH):'');
-    sc('rv1', r.rafter!==null?mm(r.rafter):'');
+    sc('rv0', r.roofH!==null?String(Math.round(r.roofH)):'');
+    sc('rv1', r.rafter!==null?String(Math.round(r.rafter)):'');
     hl(ai===1, false, ai===0);
     st('tS', S.slope?'勾配 '+S.slope+'寸':'勾配 —', !!S.slope);
     st('tA', r.angA2!==null?'角A '+r.angA2.toFixed(1)+'°':'角A —°', false);
     st('tB', r.angB2!==null?'角B '+r.angB2.toFixed(1)+'°':'角B —°', false);
-    st('tH', r.rafter!==null?'斜辺 '+mm(r.rafter):'斜辺 —', r.rafter!==null);
-    st('ta', S.H?S.H+'mm':'水平 H', ai===1);
-    st('tv', r.roofH!==null?mm(r.roofH):'屋根高さ', r.roofH!==null);
+    st('tH', r.rafter!==null?'斜辺 '+String(Math.round(r.rafter)):'斜辺 —', r.rafter!==null);
+    st('ta', S.H?S.H:'水平 H', ai===1);
+    st('tv', r.roofH!==null?String(Math.round(r.roofH)):'屋根高さ', r.roofH!==null);
   }
 }
 
