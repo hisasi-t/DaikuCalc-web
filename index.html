@@ -28,7 +28,10 @@ html,body {
   height:100dvh;
   display:flex;
   flex-direction:column;
-  padding: env(safe-area-inset-top) 12px calc(env(safe-area-inset-bottom) + 10px);
+  padding-top: max(env(safe-area-inset-top), 52px);
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-bottom: max(env(safe-area-inset-bottom), 8px);
   gap:8px;
 }
 
@@ -64,15 +67,15 @@ html,body {
 /* ── セルグリッド（2列×2行） ── */
 .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; flex-shrink:0; }
 
-.cell { background:var(--s1); border-radius:var(--r); padding:10px 14px; border:1.5px solid transparent; cursor:pointer; transition:border-color .15s,background .15s; }
-.cell.on { border-color:var(--acc); background:var(--s2); }
-.cell.ro { cursor:default; }
+.cell { background:var(--s2); border-radius:var(--r); padding:10px 14px; border:1.5px solid rgba(255,255,255,0.08); cursor:pointer; transition:border-color .15s,background .15s; }
+.cell.on { border-color:var(--acc); background:var(--s3); }
+.cell.ro { cursor:default; border-color:transparent; background:var(--s1); }
 
-.ck { font-size:10px; color:var(--lbl3); font-weight:600; margin-bottom:4px; }
+.ck { font-size:10px; color:var(--lbl2); font-weight:600; margin-bottom:4px; }
 .cell.on .ck { color:var(--acc); }
 
 .cv { font-family:var(--mono); font-size:20px; font-weight:500; color:var(--lbl); min-height:22px; }
-.cv.empty { color:rgba(235,235,245,.25); font-size:15px; }
+.cv.empty { color:rgba(235,235,245,.35); font-size:15px; }
 
 /* ── リセット ── */
 .rst-row { text-align:center; flex-shrink:0; }
