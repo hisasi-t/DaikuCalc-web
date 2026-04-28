@@ -65,20 +65,20 @@ html,body {
 .rsq { fill:none; stroke:#c7c7cc; stroke-width:1.2; }
 
 /* SVG テキスト（大きめ） */
-.svl    { font-family:var(--mono); font-size:14px; fill:#636366; }
+.svl    { font-family:var(--mono); font-size:20px; fill:#636366; }
 .svl.on { fill:var(--acc); font-weight:700; }
 
 /* ── セルグリッド（2列×2行） ── */
-.grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; flex-shrink:0; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; flex-shrink:0; }
 
 .cell { background:var(--s1); border-radius:var(--r); padding:6px 12px; border:1.5px solid var(--s3); cursor:pointer; transition:border-color .15s,background .15s; }
 .cell.on { border-color:var(--acc); background:#FFF8F5; }
 .cell.ro { cursor:default; border-color:var(--s3); background:var(--s1); }
 
-.ck { font-size:10px; color:var(--lbl3); font-weight:600; margin-bottom:2px; }
+.ck { font-size:13px; color:var(--lbl3); font-weight:600; margin-bottom:2px; }
 .cell.on .ck { color:var(--acc); }
 
-.cv { font-family:var(--mono); font-size:18px; font-weight:500; color:var(--lbl); min-height:20px; }
+.cv { font-family:var(--mono); font-size:24px; font-weight:500; color:var(--lbl); min-height:26px; }
 .cv.empty { color:var(--lbl3); font-size:15px; }
 
 /* ── リセット ── */
