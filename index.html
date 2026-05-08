@@ -181,7 +181,9 @@ function mm(v) {
 // ── 計算 ──
 function calc() {
   const a=parseFloat(S.a)||0, b=parseFloat(S.b)||0;
-  const sl=parseFloat(S.slope)||0, sl2=parseFloat(S.slope2)||0, H=parseFloat(S.H)||0;
+  const sl=parseFloat(S.slope)||0;
+  const sl2 = S.slope2!=='' ? parseFloat(S.slope2)||0 : sl;
+  const H=parseFloat(S.H)||0;
 
   // 画面1
   const fs2 = S.slopeFrom==='manual' && !S.a && sl>0;
@@ -210,6 +212,10 @@ function kp(k) {
   else if (k==='.') { if(!v.includes('.')) v+='.'; }
   else v+=k;
   S[f]=v;
+  if (f==='slope2') {
+    S.slope = v;
+    S.slopeFrom = v!=='' ? 'manual' : 'none';
+  }
   if ((f==='a'||f==='b') && S.slopeFrom!=='manual') {
     const r=calc();
     if (r.slopeR!==null) { S.slope=r.slopeR.toFixed(2); S.slopeFrom='screen1'; }
@@ -264,13 +270,15 @@ function render() {
   } else {
     g('ca-k').textContent='勾配'; g('cb-k').textContent='水平 H';
     g('ca').classList.toggle('on',ai===0); g('cb').classList.toggle('on',ai===1);
-    sc('ca-v', S.slope2?S.slope2+'寸':'');
+    const effSl = S.slope2 || (S.slopeFrom!=='none' ? S.slope : '');
+    sc('ca-v', effSl ? effSl+'寸' : '');
     sc('cb-v', S.H?S.H:'');
     g('rk0').textContent='屋根高さ'; g('rk1').textContent='斜辺（垂木長さ）';
     sc('rv0', r.roofH!==null?String(Math.round(r.roofH)):'');
     sc('rv1', r.rafter!==null?String(Math.round(r.rafter)):'');
     hl(ai===1, false, ai===0);
-    st('tS', S.slope?'勾配 '+S.slope+'寸':'勾配 —', !!S.slope);
+    const svgSl = S.slope2||S.slope;
+    st('tS', svgSl?'勾配 '+svgSl+'寸':'勾配 —', !!svgSl);
     st('tA', r.angA2!==null?'角A '+r.angA2.toFixed(1)+'°':'角A —°', false);
     st('tB', r.angB2!==null?'角B '+r.angB2.toFixed(1)+'°':'角B —°', false);
     st('tH', r.rafter!==null?'斜辺 '+String(Math.round(r.rafter)):'斜辺 —', r.rafter!==null);
